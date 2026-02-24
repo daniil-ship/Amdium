@@ -55,7 +55,6 @@ public class BenchmarkUtil {
 
         int avg = sum / fpsHistory.size();
 
-        // Рассчитываем 1% low и 0.1% low
         List<Integer> sorted = new ArrayList<>(fpsHistory);
         sorted.sort(Integer::compareTo);
         int onePercentLow = sorted.get(Math.max(0, (int)(sorted.size() * 0.01)));
@@ -88,4 +87,5 @@ public class BenchmarkUtil {
         for (int fps : fpsHistory) sum += fps;
         return sum / fpsHistory.size();
     }
+
 }
