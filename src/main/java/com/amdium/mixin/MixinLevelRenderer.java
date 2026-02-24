@@ -14,11 +14,9 @@ public class MixinLevelRenderer {
     @Inject(method = "renderLevel", at = @At("HEAD"))
     private void amdium$beforeRenderLevel(CallbackInfo ci) {
         if (!AmdiumConfig.ENABLED.get()) return;
-
-        // AMD-оптимизация: hint для драйвера перед рендером мира
         if (AmdiumConfig.PIPELINE_OPTIMIZATION.get()) {
-            // Отключаем ненужные тесты во время рендера мира
             GL11.glDisable(GL11.GL_DITHER);
         }
     }
+
 }
