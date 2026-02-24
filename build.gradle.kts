@@ -16,9 +16,6 @@ plugins {
     id("org.spongepowered.mixin") version "0.7.+"
 }
 
-// ============================================
-// Читаем свойства из gradle.properties
-// ============================================
 val modId: String by project
 val modName: String by project
 val modVersion: String by project
@@ -28,7 +25,6 @@ val forgeVersion: String by project
 val mappingChannel: String by project
 val mappingVersion: String by project
 
-// Превращаем snake_case из gradle.properties
 val mcVersion = project.property("minecraft_version") as String
 val frgVersion = project.property("forge_version") as String
 val mapChannel = project.property("mapping_channel") as String
@@ -51,9 +47,6 @@ java {
     }
 }
 
-// ============================================
-// Minecraft / Forge настройка
-// ============================================
 configure<UserDevExtension> {
     mappings(mapChannel, mapVersion)
 
@@ -114,17 +107,11 @@ configure<UserDevExtension> {
     }
 }
 
-// ============================================
-// Mixin настройка
-// ============================================
 configure<MixinExtension> {
     add(sourceSets.main.get(), "amdium.refmap.json")
     config("amdium.mixins.json")
 }
 
-// ============================================
-// Репозитории
-// ============================================
 repositories {
     maven {
         name = "MinecraftForge"
@@ -133,9 +120,6 @@ repositories {
     mavenCentral()
 }
 
-// ============================================
-// Зависимости
-// ============================================
 dependencies {
     // Forge
     "minecraft"("net.minecraftforge:forge:${mcVersion}-${frgVersion}")
@@ -144,9 +128,6 @@ dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
-// ============================================
-// JAR настройка
-// ============================================
 tasks.withType<Jar> {
     manifest {
         attributes(
@@ -166,28 +147,8 @@ tasks.withType<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// ============================================
-// Кодировка
-// ============================================
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-}
-
-// ============================================
-// Публикация (опционально)
-// ============================================
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            artifactId = mId
-            from(components["java"])
-        }
-    }
-    repositories {
-        maven {
-            url = uri("file://${project.projectDir}/repo")
-        }
-    }
 }
 
 tasks.named<Jar>("jar") {
