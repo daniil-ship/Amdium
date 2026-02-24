@@ -61,30 +61,22 @@ public class AMDOptimizer {
             }
         }
 
-        // Применяем системные свойства JVM для AMD
         applyJVMOptimizations();
 
         Amdium.LOGGER.info("All optimizations applied!");
     }
 
-    /**
-     * Вызывается каждый тик для динамических оптимизаций
-     */
     public void tick() {
         tickCounter++;
 
-        // Каждые 20 тиков (1 секунда)
         if (tickCounter % 20 == 0) {
             for (IOptimization opt : optimizations) {
                 try {
                     opt.tick();
                 } catch (Exception e) {
-                    // Тихо пропускаем ошибки в тиках
                 }
             }
         }
-
-        // Каждые 600 тиков (30 секунд) — тяжёлые оптимизации
         if (tickCounter % 600 == 0) {
             for (IOptimization opt : optimizations) {
                 try {
@@ -103,9 +95,7 @@ public class AMDOptimizer {
 
         Amdium.LOGGER.info("Applying JVM hints for AMD CPU...");
 
-        // Подсказки для JVM оптимизации на AMD
         try {
-            // Оптимальный размер кеш-линии для AMD Zen
             if (cpuInfo.isZen()) {
                 System.setProperty("sun.misc.Contended.padding", "64");
             }
@@ -132,4 +122,5 @@ public class AMDOptimizer {
         }
         return sb.toString();
     }
+
 }
