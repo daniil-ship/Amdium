@@ -49,15 +49,11 @@ public class CPUInfo {
                 architecture != CPUArchitecture.EXCAVATOR;
     }
 
-    /**
-     * Получить оптимальное количество потоков для чанков
-     * на основе архитектуры AMD (учитываем CCX/CCD)
-     */
     public int getOptimalChunkThreads() {
         if (!isAMD) return Math.max(1, threads / 2);
 
         return switch (architecture) {
-            case ZEN_1, ZEN_PLUS -> Math.max(1, cores - 1); // оставляем 1 ядро для главного потока
+            case ZEN_1, ZEN_PLUS -> Math.max(1, cores - 1);
             case ZEN_2 -> Math.max(2, cores - 1);
             case ZEN_3, ZEN_3_PLUS -> Math.max(2, (int)(cores * 0.75));
             case ZEN_4, ZEN_5 -> Math.max(2, (int)(cores * 0.8));
@@ -66,15 +62,12 @@ public class CPUInfo {
         };
     }
 
-    /**
-     * Получить количество потоков в одном CCX
-     */
     public int getCCXThreads() {
         return switch (architecture) {
-            case ZEN_1, ZEN_PLUS -> 4;  // 4 ядра на CCX
-            case ZEN_2 -> 4;             // 4 ядра на CCX
-            case ZEN_3, ZEN_3_PLUS -> 8; // 8 ядер на CCD
-            case ZEN_4, ZEN_5 -> 8;      // 8 ядер на CCD
+            case ZEN_1, ZEN_PLUS -> 4;
+            case ZEN_2 -> 4;
+            case ZEN_3, ZEN_3_PLUS -> 8;
+            case ZEN_4, ZEN_5 -> 8;
             default -> cores;
         };
     }
@@ -84,4 +77,5 @@ public class CPUInfo {
         return String.format("CPUInfo{name='%s', cores=%d, threads=%d, arch=%s, apu=%s}",
                 name, cores, threads, architecture, hasAPU);
     }
+
 }
