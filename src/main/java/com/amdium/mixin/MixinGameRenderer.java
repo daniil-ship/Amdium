@@ -14,22 +14,16 @@ public class MixinGameRenderer {
     @Inject(method = "render", at = @At("HEAD"))
     private void amdium$onRenderStart(float partialTick, long nanoTime, boolean renderLevel, CallbackInfo ci) {
         if (!AmdiumConfig.ENABLED.get()) return;
-
-        // Оптимизация начала кадра для AMD
-        // AMD драйвер: начинаем с чистого состояния для лучшего pipelining
         if (AmdiumConfig.GL_STATE_CACHE.get() && Amdium.getInstance().isAmdDetected()) {
-            // Сброс кеша состояний в начале каждого кадра
-            // чтобы AMD драйвер мог лучше оптимизировать
         }
     }
 
     @Inject(method = "render", at = @At("RETURN"))
     private void amdium$onRenderEnd(float partialTick, long nanoTime, boolean renderLevel, CallbackInfo ci) {
         if (!AmdiumConfig.ENABLED.get()) return;
-
-        // Бенчмарк тик
         if (com.amdium.util.BenchmarkUtil.isRunning()) {
             com.amdium.util.BenchmarkUtil.tick();
         }
     }
+
 }
