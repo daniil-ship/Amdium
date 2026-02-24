@@ -21,13 +21,10 @@ public class MixinRenderSystem {
         if (!AmdiumConfig.ENABLED.get()) return;
 
         Amdium.LOGGER.info("RenderSystem initialized — applying AMD render optimizations");
-
-        // Здесь можно применить ранние GL оптимизации
         try {
             org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_DITHER);
 
             if (AmdiumConfig.PIPELINE_OPTIMIZATION.get()) {
-                // AMD: fastest hints
                 org.lwjgl.opengl.GL11.glHint(
                         org.lwjgl.opengl.GL11.GL_LINE_SMOOTH_HINT,
                         org.lwjgl.opengl.GL11.GL_FASTEST);
@@ -39,4 +36,5 @@ public class MixinRenderSystem {
             Amdium.LOGGER.debug("Early GL optimizations partially failed: {}", e.getMessage());
         }
     }
+
 }
