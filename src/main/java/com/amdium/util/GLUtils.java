@@ -28,7 +28,6 @@ public class GLUtils {
                 }
             }
         } catch (Exception e) {
-            // Fallback: парсим GL_EXTENSIONS строку
             try {
                 String extensions = GL11.glGetString(GL11.GL_EXTENSIONS);
                 if (extensions != null) {
@@ -75,4 +74,5 @@ public class GLUtils {
             com.amdium.Amdium.LOGGER.warn("GL Error during {}: {}", operation, errorName);
         }
     }
+
 }
