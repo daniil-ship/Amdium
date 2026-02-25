@@ -28,17 +28,14 @@ public class ChunkRenderOptimizer implements IOptimization {
 
     @Override
     public void apply() {
-        // Оптимизация количества потоков для рендера чанков
         int optimalThreads = cpuInfo.getOptimalChunkThreads();
 
         Amdium.LOGGER.info("Chunk optimization: recommended {} threads", optimalThreads);
 
-        // Для AMD GPU с маленьким VRAM — логируем рекомендацию
         if (gpuInfo.isIntegrated() || gpuInfo.getVramMB() < 2048) {
             Amdium.LOGGER.info("Low VRAM detected - recommend render distance <= 12");
         }
 
-        // Для RDNA GPU
         if (gpuInfo.isRDNA()) {
             Amdium.LOGGER.info("RDNA architecture detected, optimizing batch sizes");
         }
@@ -48,7 +45,7 @@ public class ChunkRenderOptimizer implements IOptimization {
 
     @Override
     public void tick() {
-        // Пока пусто - добавим позже
+
     }
 
     @Override
@@ -60,4 +57,5 @@ public class ChunkRenderOptimizer implements IOptimization {
     public void disable() {
         active = false;
     }
+
 }
