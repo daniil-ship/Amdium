@@ -43,12 +43,8 @@ public class MemoryOptimizer implements IOptimization {
     private void applyAPUMemoryOptimizations() {
         Amdium.LOGGER.info("Applying APU shared memory optimizations");
 
-        // На APU GPU и CPU делят одну RAM
-        // Нужно быть аккуратнее с выделением памяти
-
         int vramLimitMB = AmdiumConfig.APU_VRAM_LIMIT_MB.get();
         if (vramLimitMB <= 0) {
-            // Auto: выделяем 25% от доступной RAM для GPU
             long totalMemory = Runtime.getRuntime().maxMemory();
             vramLimitMB = (int) (totalMemory / (1024 * 1024) / 4);
             Amdium.LOGGER.info("APU Auto VRAM limit: {} MB", vramLimitMB);
@@ -59,19 +55,13 @@ public class MemoryOptimizer implements IOptimization {
 
     private void applyGLMemoryOptimizations() {
         try {
-            // Оптимизация паттернов выделения GL буферов для AMD
-            // AMD драйвер предпочитает orphan буферы вместо субдата
-
-            // Устанавливаем оптимальные размеры текстурного кеша
             int maxTextureSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
             Amdium.LOGGER.info("Max texture size: {}", maxTextureSize);
 
-            // Для AMD — лучше использовать immutable storage
             if (GLUtils.isExtensionSupported("GL_ARB_buffer_storage")) {
                 Amdium.LOGGER.info("Using GL_ARB_buffer_storage for optimized memory");
             }
 
-            // AMD-специфичная оптимизация пиннинга памяти
             if (GLUtils.isExtensionSupported("GL_AMD_pinned_memory")) {
                 Amdium.LOGGER.info("AMD pinned memory extension available — using for buffers");
             }
@@ -85,16 +75,14 @@ public class MemoryOptimizer implements IOptimization {
     public void periodicUpdate() {
         if (!active) return;
 
-        // Периодическая очистка для APU (разделяемая память)
         if (isAPU && AmdiumConfig.APU_SHARED_MEMORY_OPT.get()) {
             long now = System.currentTimeMillis();
-            if (now - lastGCTime > 30000) { // каждые 30 сек
+            if (now - lastGCTime > 30000) {
                 Runtime runtime = Runtime.getRuntime();
                 long usedMemory = runtime.totalMemory() - runtime.freeMemory();
                 long maxMemory = runtime.maxMemory();
                 double memoryUsage = (double) usedMemory / maxMemory;
 
-                // Если используется больше 80% памяти — подсказываем GC
                 if (memoryUsage > 0.8) {
                     System.gc();
                     Amdium.LOGGER.debug("APU memory optimization: triggered GC at {}%",
@@ -115,7 +103,6 @@ public class MemoryOptimizer implements IOptimization {
         active = false;
     }
 
-    // Вспомогательный класс для проверки GL расширений
     private static class GLUtils {
         static boolean isExtensionSupported(String ext) {
             try {
@@ -128,4 +115,5 @@ public class MemoryOptimizer implements IOptimization {
             return false;
         }
     }
+
 }
