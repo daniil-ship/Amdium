@@ -34,7 +34,6 @@ public class ThreadOptimizer implements IOptimization {
         Amdium.LOGGER.info("Applying AMD CPU thread optimizations for {} architecture",
                 cpuInfo.getArchitecture());
 
-        // Оптимизации специфичные для архитектуры Zen
         if (cpuInfo.isZen()) {
             applyZenOptimizations();
         } else {
@@ -51,10 +50,6 @@ public class ThreadOptimizer implements IOptimization {
         Amdium.LOGGER.info("Zen optimization: CCX size={}, optimal chunk threads={}",
                 ccxThreads, optimalThreads);
 
-        // Zen архитектура: лучше держать потоки в пределах одного CCX/CCD
-        // чтобы избежать inter-CCX latency
-
-        // Устанавливаем приоритет главного потока
         try {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
             Amdium.LOGGER.info("Main thread priority elevated");
@@ -62,9 +57,7 @@ public class ThreadOptimizer implements IOptimization {
             Amdium.LOGGER.debug("Cannot set thread priority");
         }
 
-        // Подсказки для GC потоков
         try {
-            // Для Zen лучше параллельный GC с количеством потоков = cores/2
             int gcThreads = Math.max(2, cpuInfo.getCores() / 4);
             Amdium.LOGGER.info("Recommended GC threads for Zen: {}", gcThreads);
         } catch (Exception e) {
@@ -74,8 +67,6 @@ public class ThreadOptimizer implements IOptimization {
 
     private void applyLegacyAMDOptimizations() {
         Amdium.LOGGER.info("Applying legacy AMD CPU optimizations");
-        // Для Bulldozer/Piledriver — модули имеют общий FPU
-        // Лучше не перегружать потоками
     }
 
     private void applyGenericOptimizations() {
@@ -93,4 +84,5 @@ public class ThreadOptimizer implements IOptimization {
     public void disable() {
         active = false;
     }
+
 }
