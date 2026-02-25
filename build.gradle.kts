@@ -141,7 +141,6 @@ tasks.withType<Jar> {
         )
     }
 
-    // Включаем refmap в JAR
     from(sourceSets.main.get().output)
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
