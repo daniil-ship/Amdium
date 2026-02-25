@@ -18,7 +18,7 @@ public class AmdiumHudOverlay implements IGuiOverlay {
         if (!AmdiumConfig.ENABLED.get()) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.renderDebug) return; // Не показываем вместе с F3
+        if (mc.options.renderDebug) return; // F3
 
         Amdium amdium = Amdium.getInstance();
         if (amdium == null || amdium.getGpuInfo() == null) return;
@@ -32,7 +32,6 @@ public class AmdiumHudOverlay implements IGuiOverlay {
         int greenColor = 0xFF00FF00;
         int yellowColor = 0xFFFFFF00;
 
-        // Заголовок
         graphics.drawString(font, "§c[Amdium] §rv" + Amdium.VERSION, x, y, accentColor, true);
         y += lineHeight;
 
@@ -89,4 +88,5 @@ public class AmdiumHudOverlay implements IGuiOverlay {
             graphics.drawString(font, "§6Benchmarking: " + progress + "%", x, y, yellowColor, true);
         }
     }
+
 }
