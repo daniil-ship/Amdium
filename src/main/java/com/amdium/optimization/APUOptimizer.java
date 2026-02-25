@@ -47,15 +47,14 @@ public class APUOptimizer implements IOptimization {
         int cores = cpuInfo.getCores();
         int threads = cpuInfo.getThreads();
 
-        // Определяем профиль на основе оборудования
         if (gpuInfo.getArchitecture() == GPUInfo.GPUArchitecture.RDNA_3_APU) {
-            // Новые APU (780M, 890M) — достаточно мощные
+            // (780M, 890M)
             return AmdiumConfig.APUProfile.PERFORMANCE;
         } else if (gpuInfo.getArchitecture() == GPUInfo.GPUArchitecture.RDNA_2_APU) {
-            // Средние APU (680M)
+            // (680M)
             return AmdiumConfig.APUProfile.BALANCED;
         } else if (gpuInfo.isVega()) {
-            // Старые APU (Vega)
+            // (Vega)
             if (threads >= 8) {
                 return AmdiumConfig.APUProfile.BALANCED;
             } else {
@@ -76,7 +75,7 @@ public class APUOptimizer implements IOptimization {
                 Amdium.LOGGER.info("  - Reducing particle effects");
                 Amdium.LOGGER.info("  - Limiting texture resolution");
 
-                // Рекомендации для слабых APU
+                // APU
                 if (mc.options.renderDistance().get() > 8) {
                     Amdium.LOGGER.info("  Suggest: render distance <= 8");
                 }
@@ -87,7 +86,6 @@ public class APUOptimizer implements IOptimization {
                 Amdium.LOGGER.info("  - Balanced render settings");
                 Amdium.LOGGER.info("  - Smart VRAM management");
 
-                // Средние настройки
                 if (mc.options.renderDistance().get() > 12) {
                     Amdium.LOGGER.info("  Suggest: render distance <= 12");
                 }
@@ -106,8 +104,6 @@ public class APUOptimizer implements IOptimization {
                 Amdium.LOGGER.info("  - Reduced visual quality for FPS");
             }
         }
-
-        // Общие APU оптимизации
         applySharedMemoryOptimizations();
     }
 
@@ -116,15 +112,8 @@ public class APUOptimizer implements IOptimization {
 
         Amdium.LOGGER.info("APU: Optimizing shared memory access patterns");
 
-        // На APU CPU и GPU делят одну RAM
-        // Оптимизируем паттерны доступа к памяти
-
-        // 1. Уменьшаем количество копий данных между CPU и GPU
-        // 2. Используем coherent буферы где возможно
-        // 3. Минимизируем пиннинг памяти
-
         long totalMemory = Runtime.getRuntime().maxMemory();
-        long reservedForGPU = totalMemory / 4; // 25% для GPU
+        long reservedForGPU = totalMemory / 4;
         long availableForGame = totalMemory - reservedForGPU;
 
         Amdium.LOGGER.info("APU Memory allocation:");
@@ -162,4 +151,5 @@ public class APUOptimizer implements IOptimization {
     public AmdiumConfig.APUProfile getCurrentProfile() {
         return currentProfile;
     }
+
 }
